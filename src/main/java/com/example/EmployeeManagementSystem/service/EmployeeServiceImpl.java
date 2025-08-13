@@ -8,6 +8,7 @@ import com.example.EmployeeManagementSystem.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,4 +41,24 @@ public class EmployeeServiceImpl implements EmployeeService{
         return employees.stream().map(x ->EmployeeMapper.mapToEmployeeDto(x))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public EmployeeDto UpdateEmployee(Long employeeId, EmployeeDto updateEmployee) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFound("sorry not found"));
+
+        employee.setFirstName(updateEmployee.getFirstName());
+        employee.setLastName(updateEmployee.getLastName());
+        employee.setEmail(updateEmployee.getEmail());
+        Employee employeedto =   employeeRepository.save(employee);
+
+        return EmployeeMapper.mapToEmployeeDto(employeedto);
+    }
+
+    @Override
+    public void Delete(Long id) {
+        employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Employee not found"));
+        employeeRepository.deleteById(id);
+    }
+
 }
